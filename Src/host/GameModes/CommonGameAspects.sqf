@@ -604,7 +604,10 @@ _GADeathSprintWeight = 0.2; 		// Поступь мертвеца
 _GACombatChairsWeight = 0.5;		// Опасные стулья
 _GADangerousWeaponWeight = 0.3;	    // Опасные пафели
 _GAPainfullPainkillerWeight = 0.3;  // Больное обезболивающее
-_GAStartRolesShuffle = 0.2;		    // Смешивание ролей при старте игры
+_GAStartRolesShuffleWeight = 0.2;	// Смешивание ролей при старте игры
+_GATeginovoWeight = 0.05;			// Тегиново
+_GAUglyarovoWeight = 0.05;			// Углярово
+_GAVahatovoWeight = 0.05;			// Вахатово
 
 // Злачник
 _GASaloonWhereWeaponsWeight = 1;    // Где наши пушки?
@@ -938,3 +941,48 @@ endclass
 	};
 
 endclass*/
+
+class(GARace) extends(BaseGameAspect) 
+	var(name, "Расизм");
+	var(desc, "Кого будем гнобить сегодня? Выберите тип расизма.");
+	var(allowedMaps, ["Dirtpit" arg "detective" arg "SaloonV2" arg "Truba" arg "Okopovo"]);
+	
+	var(faces, "white");
+	var(facesMale, null);
+	var(facesFemale, null);
+
+	func(onActivate) 
+	{
+		setSelf(facesMale, faces_map_man get getSelf(faces));
+		setSelf(facesFemale, faces_map_woman get getSelf(faces));
+	};
+
+	func(onMob)
+	{
+		objParams_1(_mob);
+		
+		
+		// проверка на текущую расу.
+		// добавить всем мобам в воспоминания расу
+		private _faces = ifcheck(callFunc(_mob,isMale),getSelf(facesMale),getSelf(facesFemale));
+		callFuncParams(_mob,setMobFace,pick _faces);
+	};
+endclass
+
+class(GATeginovo) extends(GARace) 
+	var(faces, "asian");
+	var(weight,_GATeginovoWeight);
+	var(descRoleplay, "");
+endclass
+
+class(GAVahatovo) extends(GARace) 
+	var(faces, "persian");
+	var(weight,_GAVahatovoWeight);
+	var(descRoleplay, "");
+endclass
+
+class(GAUglyarovo) extends(GARace) 
+	var(faces, "black");
+	var(weight,_GAUglyarovoWeight);
+	var(descRoleplay, "");
+endclass
